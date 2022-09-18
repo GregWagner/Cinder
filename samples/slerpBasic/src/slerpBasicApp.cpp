@@ -10,65 +10,61 @@ using namespace std;
 
 class slerpBasicApp : public App {
   public:
-	void setup();
-	void mouseDown( MouseEvent event );	
-	void update();
-	void draw();
-	void drawPathBetweenVectors( vec3 a, vec3 b );
+	void setup() override;
+	void mouseDown(MouseEvent event) override;	
+	void update() override;
+	void draw() override;
+
+	void drawPathBetweenVectors( vec3 a, vec3 b ) const;
 
 	void setupSlerp();
 	
 	CameraPersp		mCam;
 	quat			mSpinTheWholeWorld;
-	vec3			mVecA, mVecB;
-	float			mSlerpAmt;
+	vec3			mVecA;
+	vec3			mVecB;
+    float mSlerpAmt {};
 };
 
-void slerpBasicApp::setup()
-{
-	// setup a camera that looks back at the origin from (3,3,3);
-	mCam = CameraPersp( getWindowWidth(), getWindowHeight(), 45 );
-	mCam.setPerspective( 45.0f, getWindowAspectRatio(), 0.1f, 100.0f );
-	mCam.lookAt( vec3( 3, 3, 3 ), vec3( 0 ) );
+void slerpBasicApp::setup() {
+	// Setup a camera that looks back at the origin from (3,3,3)
+	mCam = CameraPersp(getWindowWidth(), getWindowHeight(), 45);
+	mCam.setPerspective(45.0f, getWindowAspectRatio(), 0.1f, 100.0f);
+	mCam.lookAt( vec3(3, 3, 3), vec3(0) );
 	
-	mSpinTheWholeWorld = quat( 0.0f, vec3( 0, 1, 0 ) );
+	mSpinTheWholeWorld = quat(0.0f, vec3(0, 1, 0));
 	
 	setupSlerp();
 }
 
-void slerpBasicApp::mouseDown( MouseEvent event )
-{
+void slerpBasicApp::mouseDown(MouseEvent event) {
 	setupSlerp();
 }
 
-void slerpBasicApp::update()
-{
+void slerpBasicApp::update() {
 	mSlerpAmt += 0.01f;
-	if( mSlerpAmt > 1 )
+	if (mSlerpAmt > 1)
 		mSlerpAmt = 0;
 	
 	// spin the scene by a few degrees around the y Axis
 	mSpinTheWholeWorld = angleAxis( 0.01f, vec3( 0, 1, 0 ) ) * mSpinTheWholeWorld;
 }
 
-void slerpBasicApp::setupSlerp()
-{
+void slerpBasicApp::setupSlerp() {
 	mVecA = randVec3();
 	mVecB = randVec3();
 	mSlerpAmt = 0;
 }
 
-void slerpBasicApp::drawPathBetweenVectors( vec3 a, vec3 b )
-{
+void slerpBasicApp::drawPathBetweenVectors( vec3 a, vec3 b ) const {
 	// draws a path composed of 100 line segments
-	gl::begin( GL_LINE_STRIP );
+	gl::begin(GL_LINE_STRIP );
 	for( float t = 0; t <= 1.0f; t += 0.01f )
 		gl::vertex( slerp( a, b, t ) );
 	gl::end();
 }
 
-void slerpBasicApp::draw()
-{
+void slerpBasicApp::draw() {
 	// clear out the window with black
 	gl::clear( Color( 0, 0, 0 ) ); 
 	gl::enableAlphaBlending();
